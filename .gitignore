@@ -189,3 +189,6 @@ Icon
 Network Trash Folder
 Temporary Items
 .apdisk
+.idea/this_studio.iml
+.lightning_studio/.studiorc
+.lightning_studio/on_start.sh
