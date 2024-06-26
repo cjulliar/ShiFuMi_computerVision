@@ -1,0 +1,21 @@
+{
+    "name": "Python ultralytics",
+    "build": {
+        "dockerfile": "Dockerfile",
+        "context": ".."
+    },
+    "shutdownAction": "stopContainer",
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-toolsai.jupyter",
+                "mhutchie.git-graph",
+                "ms-python.python",
+                "charliermarsh.ruff",
+                "ms-python.vscode-pylance",
+                "christian-kohler.path-intellisense"
+            ]
+        }
+    },
+    "postCreateCommand": "pip install --no-cache-dir -r requirements.txt"
+}

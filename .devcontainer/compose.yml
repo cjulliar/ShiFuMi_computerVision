@@ -1,0 +1,5 @@
+services:
+  dev:
+    volumes:
+      - ../.:/workspace
+    build: .
