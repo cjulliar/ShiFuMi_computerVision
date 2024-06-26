@@ -1,1 +1,5 @@
 ultralytics
+scikit-learn
+pandas
+numpy
+roboflow

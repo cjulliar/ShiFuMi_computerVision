@@ -163,4 +163,6 @@ cython_debug/
 
 .idea
 .lightning_studio
-.lightning_studio
+runs
+Rock-Paper-Scissors-SXSW-14
+yolov9c.pt
