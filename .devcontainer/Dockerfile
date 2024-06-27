@@ -8,5 +8,6 @@ RUN apt-get update \
   wget \
   zip \
   curl \
+  libgl1-mesa-glx \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/*
