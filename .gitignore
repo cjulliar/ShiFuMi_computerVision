@@ -166,3 +166,4 @@ cython_debug/
 runs
 Rock-Paper-Scissors-SXSW-14
 yolov9c.pt
+yolov8n.pt
