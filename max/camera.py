@@ -16,13 +16,14 @@ class MyModel:
         # )
 
         self._model = YOLO(
-            "/Users/maximekuil/Documents/Simplon/ShiFuMi_computerVision/shifumi_trained.pt"
+            "/teamspace/studios/this_studio/runs/detect/train7/weights/best.torchscript" 
         )
 
         # with torch.inference_mode():
-        self._model.predict(
-            "/Users/maximekuil/Documents/Simplon/ShiFuMi_computerVision/Rock-Paper-Scissors-SXSW-14/test/images/20220216_221550_jpg.rf.02a071a383151953fcf8671fc7fca3af.jpg",
-            classes=["Paper", "Rock", "Scissors"],
+        
+
+        self._model(
+            "/teamspace/studios/this_studio/Rock-Paper-Scissors-SXSW-14/test/images/egohands-public-1621349890675_png_jpg.rf.0d6f828c1a48a7515a87a85c468da676.jpg",
         )
 
     # after v0.9.18
