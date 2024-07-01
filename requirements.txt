@@ -4,3 +4,4 @@ pandas
 numpy
 roboflow
 inference
+streamlit
