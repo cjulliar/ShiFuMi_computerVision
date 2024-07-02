@@ -170,3 +170,5 @@ yolov8n.pt
 yolov9t.pt
 .DS_Store
 yolov9s.pt
+
+datasets/
