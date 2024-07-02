@@ -15,9 +15,6 @@ from inference.core.interfaces.stream.sinks import UDPSink
 from ultralytics import YOLO
 
 
-# affichage classes + probas + box sur vidéo en live
-
-
 class VideoFrameWithPredictions:
     def __init__(self, video_frame: VideoFrame, predictions: dict = None):
         self.video_frame = video_frame
@@ -30,40 +27,17 @@ class MyModel:
         self._model = YOLO(weights_path)
         print("Modèle chargé avec succès")
 
-    def infer(self, video_frames: List[VideoFrame]) -> List[any]:
-        # convertir liste d'images en objet reconnu par yolo
-        images = [v.image for v in video_frames]
-        # convertir les images en numpy array
-        # images_np = [np.array(img) for img in images]
-
-        # faire predictions
-        results = self._model(images, imgsz="640", stream=True)
-
-        for i, result in enumerate(results):
-            boxes = result.boxes.xyxy.tolist() if result.boxes else []
-            scores = result.boxes.conf.tolist() if result.boxes else []
-            class_indices = result.boxes.cls.tolist() if result.boxes else []
-
-            video_frame = video_frames[i]
-            predictions = {
-                "boxes": boxes,
-                "scores": scores,
-                "class_indices": class_indices,
-            }
-
-        return predictions, video_frame
-
-    def infer2(self, video_frames: List[VideoFrame]) -> List[VideoFrameWithPredictions]:
-        # print("Video frames:", len(video_frames))
+    def infer(self, video_frames: List[VideoFrame]) -> List[VideoFrameWithPredictions]:
+        print("Video frames:", len(video_frames))
 
         # convertir liste d'images en objet reconnu par yolo
         images = [v.image for v in video_frames]
 
         # convertir les images en numpy array
-        # images_np = [np.array(img) for img in images]
+        images_np = [np.array(img) for img in images]
 
         # faire predictions
-        results = self._model(images)
+        results = self._model(images_np)
 
         # liste pour stocker les images et les prédictions
         enriched_video_frames = []
@@ -86,16 +60,15 @@ class MyModel:
 
             enriched_video_frames.append(enriched_frame)
 
-        return [
-            enriched_video_frames[0].predictions,
-            enriched_video_frames[0].video_frame,
-        ]
+        return enriched_video_frames
 
 
-def render_boxes_on_frame(predictions, video_frame: VideoFrame) -> VideoFrame:
-    print(predictions)
+def render_boxes_on_frame(
+    video_frame_with_predictions: VideoFrameWithPredictions,
+) -> VideoFrame:
     # convertir l'image en numpy array
-    image = video_frame.image
+    image = np.array(video_frame_with_predictions.image)
+    predictions = video_frame_with_predictions.predictions
 
     if predictions:
         boxes = predictions["boxes"]
@@ -120,8 +93,8 @@ def render_boxes_on_frame(predictions, video_frame: VideoFrame) -> VideoFrame:
                 2,
             )
 
-    video_frame.image = image
-    return video_frame
+    video_frame_with_predictions.video_frame.image = image
+    return video_frame_with_predictions.video_frame
 
 
 my_model = MyModel("../models/shifumi_trained_yolo9t.torchscript")

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Webcam en direct</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    video {
+      width: 640px;
+      height: 480px;
+      border: 1px solid black;
+    }
+  </style>
+  <script src="https://pixijs.download/release/pixi.min.js"></script>
+</head>
+
+<body>
+  <canvas id="boxes" style="position: absolute"></canvas>
+  <video id="video" autoplay></video>
+  <button id="bt" style="position: absolute; bottom: 650px;">Start</button>
+
+  <script>
+    const video = document.getElementById('video');
+    const canvas = document.createElement('canvas');
+    const boxes = document.getElementById('boxes');
+
+    const bt = document.getElementById('bt')
+    const ctx = canvas.getContext('2d');
+    const ctxBoxes = boxes.getContext('2d');
+
+    navigator.mediaDevices.getUserMedia({ video: true })
+      .then(stream => {
+        video.srcObject = stream;
+        video.play()
+      })
+      .catch(error => {
+        console.error('Error accessing webcam:', error);
+      });
+  </script>
+  <script type="text/javascript" src="script.js"></script>
+  <!-- <script type="text/javascript" src="overlay.js" type="module"></script> -->
+</body>
+
+</html>
