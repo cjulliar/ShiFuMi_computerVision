@@ -137,7 +137,8 @@ def assign_players_to_boxes(boxes, width):
         return None, None
 
 # Streamlit app
-st.title("Jeu Pierre, Feuille, Ciseaux avec YOLO")
+st.header("Let's play ShifuMi")
+st.subheader('Powered by YOLOv9')
 
 # Initialize the model
 my_model = MyModel("models/shifumi_trained_yolo9t.torchscript")
