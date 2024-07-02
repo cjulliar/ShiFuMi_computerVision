@@ -12,33 +12,37 @@ class Game:
         self.player2 = player2
         
     def play(self, player1_hand, player2_hand):
-        while True:
+        result = ""
+        round = 0
+        for round in range(1):
             if player1_hand == player2_hand:
-                print("Egalité")
-            elif player1_hand == "rock":
-                if player2_hand == "scissors":
-                    print(f"{self.player1.name} gagne")
+                result = "Egalité"
+            elif player1_hand == "Pierre":
+                if player2_hand == "Ciseaux":
+                    result = f"{self.player1.name} gagne"
                     self.player1.score += 1
                 else:
-                    print(f"{self.player2.name} gagne")
+                    result = f"{self.player2.name} gagne"
                     self.player2.score += 1
 
-            elif player1_hand == "scissors":
-                if player2_hand == "rock":
-                    print(f"{self.player2.name} gagne")
+            elif player1_hand == "Ciseaux":
+                if player2_hand == "Pierre":
+                    result = f"{self.player2.name} gagne"
                     self.player2.score += 1
                 else:
-                    print(f"{self.player1.name} gagne")
+                    result = f"{self.player1.name} gagne"
                     self.player1.score += 1
-            elif player1_hand == "paper":
-                if player2_hand == "rock":
-                    print(f"{self.player1.name} gagne")
+            elif player1_hand == "Feuille":
+                if player2_hand == "Pierre":
+                    result = f"{self.player1.name} gagne"
                     self.player1.score += 1
                 else:
-                    print(f"{self.player2.name} gagne")
+                    result = f"{self.player2.name} gagne"
                     self.player2.score += 1
             else:
-                print("Gestes non reconnus, veuillez recommencer")
+                result = f"Gestes non reconnus, veuillez recommencer"
+            round += 1
+            return result
 
     def get_score(self):
             return f"Score: {self.player1.name}: {self.player1.score}, {self.player2.name}: {self.player2.score}"
