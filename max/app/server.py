@@ -4,7 +4,6 @@ import cv2
 from fastapi.responses import JSONResponse
 import numpy as np
 import base64
-import json
 from fastapi.middleware.cors import CORSMiddleware
 from ultralytics.engine.results import Results
 
@@ -36,4 +35,5 @@ async def receive_frame(request: Request):
     results: List[Results] = model.predict(source=img, conf=0.7, stream=True)
 
     for r in results:
+        print(r.names)
         return JSONResponse(r.tojson())

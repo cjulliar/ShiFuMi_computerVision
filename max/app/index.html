@@ -19,20 +19,33 @@
       width: 640px;
       height: 480px;
       border: 1px solid black;
+      transform: rotateY(180deg);
+      -webkit-transform: rotateY(180deg);
+      /* Safari and Chrome */
+      -moz-transform: rotateY(180deg);
     }
   </style>
-  <script src="https://pixijs.download/release/pixi.min.js"></script>
 </head>
 
 <body>
-  <canvas id="boxes" style="position: absolute"></canvas>
-  <video id="video" autoplay></video>
-  <button id="bt" style="position: absolute; bottom: 650px;">Start</button>
+  <span id="countdown" style="position: absolute; top:10px; font-size: large;">0</span>
+  <div>
+    <canvas id="boxes" style="position: absolute"></canvas>
+    <video id="video" autoplay></video>
+  </div>
 
+  <div
+    style="position: absolute; z-index: 2; bottom: 650px; display: flex;justify-content: space-between;width: 640px;">
+    <p id="scoreLeft">0</p>
+    <button id="bt">Start</button>
+    <p id="scoreRight">0</p>
+  </div>
   <script>
     const video = document.getElementById('video');
     const canvas = document.createElement('canvas');
     const boxes = document.getElementById('boxes');
+    const scoreLeft = document.getElementById('scoreLeft');
+    const scoreRight = document.getElementById('scoreRight');
 
     const bt = document.getElementById('bt')
     const ctx = canvas.getContext('2d');
@@ -48,7 +61,8 @@
       });
   </script>
   <script type="text/javascript" src="script.js"></script>
-  <!-- <script type="text/javascript" src="overlay.js" type="module"></script> -->
+  <script type="text/javascript" src="overlay.js" type="module"></script>
+  <!-- <script type="text/javascript" src="textures.js" type="module"></script> -->
 </body>
 
 </html>
