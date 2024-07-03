@@ -18,7 +18,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-model = YOLO("../../models/shifumi_trained_yolo9t.torchscript")
+model = YOLO(
+    "../../models/shifumi_trained_yolo9t2.torchscript", task="detect", verbose=False
+)
 
 
 @app.post("/send-frame")

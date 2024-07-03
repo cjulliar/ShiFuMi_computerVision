@@ -5,6 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Webcam en direct</title>
+  <script src="https://cdn.tailwindcss.com"></script>
   <style>
     body {
       margin: 0;
@@ -18,7 +19,6 @@
     video {
       width: 640px;
       height: 480px;
-      border: 1px solid black;
       transform: rotateY(180deg);
       -webkit-transform: rotateY(180deg);
       /* Safari and Chrome */
@@ -28,16 +28,15 @@
 </head>
 
 <body>
-  <span id="countdown" style="position: absolute; top:10px; font-size: large;">0</span>
   <div>
-    <canvas id="boxes" style="position: absolute"></canvas>
-    <video id="video" autoplay></video>
+    <canvas id="boxes" class="absolute"></canvas>
+    <video id="video" autoplay class="rounded-xl shadow-xl"></video>
   </div>
 
-  <div
-    style="position: absolute; z-index: 2; bottom: 650px; display: flex;justify-content: space-between;width: 640px;">
+  <div class="flex absolute top-10 justify-between w-[640px] text-xl items-center">
     <p id="scoreLeft">0</p>
-    <button id="bt">Start</button>
+    <button id="bt"
+      class="rounded-full p-4 bg-blue-600 text-white flex flex-col items-center justify-center w-24">Start</button>
     <p id="scoreRight">0</p>
   </div>
   <script>
@@ -61,8 +60,6 @@
       });
   </script>
   <script type="text/javascript" src="script.js"></script>
-  <script type="text/javascript" src="overlay.js" type="module"></script>
-  <!-- <script type="text/javascript" src="textures.js" type="module"></script> -->
 </body>
 
 </html>

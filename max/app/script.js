@@ -68,7 +68,7 @@ function rules(c1, c2) {
   if (c1 == 2 && c2 == 0) return true   // ciseau // papier
   if (c1 == 2 && c2 == 1) return false  // ciseau // rock
 
-  return false
+  return -1
 }
 
 function score() {
@@ -79,23 +79,16 @@ function score() {
     centers.push({ pos: getRectangleCenter(x1, y1, x2, y2), class: lastShifumi[i].class })
   }
 
-  var posPoint = isPointRight(centers[0].pos, centers[1].pos)
-  var win = rules(centers[0].class, centers[1].class) //&& posPoint
+  var rightSide = (centers[0].pos.x > 320) ? centers[0] : centers[1]
+  var leftSide = (centers[0].pos.x <= 320) ? centers[0] : centers[1]
+  console.log(rightSide.class, leftSide.class)
+  var win = rules(rightSide.class, leftSide.class)
 
-  console.log(win, posPoint)
-
+  if (win == -1) return
   if (win)
     scoreLeft.textContent = parseInt(scoreLeft.textContent) + 1
   else
     scoreRight.textContent = parseInt(scoreRight.textContent) + 1
-
-  // if (posPoint) { // c'est le centers[0] qui est à gauche
-  //   if (win)
-  //     scoreLeft.textContent = parseInt(scoreLeft.textContent) + 1
-  // } else {
-  //   if (win)
-  //     scoreRight.textContent = parseInt(scoreRight.textContent) + 1
-  // }
 }
 
 
@@ -106,12 +99,13 @@ function updateCountdown() {
   remainingSeconds--;
 
   // Afficher le temps restant (secondes uniquement)
-  document.getElementById('countdown').textContent = remainingSeconds;
+  bt.textContent = remainingSeconds;
 
   // Vérifier si le compte à rebours est terminé
   if (remainingSeconds == 0) {
     clearInterval(intervalRebours);
     intervalRebours = null
+    bt.click()
     score()
   }
 }
@@ -130,13 +124,6 @@ function getRectangleCenter(topLeftX, topLeftY, bottomRightX, bottomRightY) {
   return { x: centerX, y: centerY };
 }
 
-function isPointRight(point1, point2) {
-  const vectorX = point2.x - point1.x;
-  const vectorY = point2.y - point1.y;
-  const crossProduct = vectorX * 1 - vectorY * 0;
-
-  return crossProduct > 0;
-}
 
 bt.addEventListener('click', function (e) {
   started = !started
@@ -148,6 +135,7 @@ bt.addEventListener('click', function (e) {
     intervalID = setInterval(captureFrame, 350);
 
     if (!intervalRebours) {
+      bt.textContent = duration
       remainingSeconds = duration;
       // Démarrer le compte à rebours
       intervalRebours = setInterval(updateCountdown, 1000);
