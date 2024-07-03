@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Webcam en direct</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    video {
+      width: 640px;
+      height: 480px;
+      transform: rotateY(180deg);
+      -webkit-transform: rotateY(180deg);
+      /* Safari and Chrome */
+      -moz-transform: rotateY(180deg);
+    }
+  </style>
+</head>
+
+<body>
+  <div>
+    <canvas id="boxes" class="absolute"></canvas>
+    <video id="video" autoplay class="rounded-xl shadow-xl"></video>
+  </div>
+
+  <div class="flex absolute top-10 justify-between w-[640px] text-xl items-center">
+    <p id="scoreLeft">0</p>
+    <button id="bt"
+      class="rounded-full p-4 bg-blue-600 text-white flex flex-col items-center justify-center w-24">Start</button>
+    <p id="scoreRight">0</p>
+  </div>
+  <script>
+    const video = document.getElementById('video');
+    const canvas = document.createElement('canvas');
+    const boxes = document.getElementById('boxes');
+    const scoreLeft = document.getElementById('scoreLeft');
+    const scoreRight = document.getElementById('scoreRight');
+
+    const bt = document.getElementById('bt')
+    const ctx = canvas.getContext('2d');
+    const ctxBoxes = boxes.getContext('2d');
+
+    navigator.mediaDevices.getUserMedia({ video: true })
+      .then(stream => {
+        video.srcObject = stream;
+        video.play()
+      })
+      .catch(error => {
+        console.error('Error accessing webcam:', error);
+      });
+  </script>
+  <script type="text/javascript" src="script.js"></script>
+</body>
+
+</html>

@@ -1,46 +1,109 @@
 # Import the InferencePipeline object
+from functools import partial
+import json
+import os
 from typing import Any, List
+import cv2
 from inference import InferencePipeline
+import numpy as np
 
 # Import the built in render_boxes sink for visualizing results
 from inference.core.interfaces.stream.sinks import render_boxes
 from inference.core.interfaces.camera.entities import VideoFrame
-import torch
+from inference.core.interfaces.stream.sinks import UDPSink
+
 from ultralytics import YOLO
+
+
+class VideoFrameWithPredictions:
+    def __init__(self, video_frame: VideoFrame, predictions: dict = None):
+        self.video_frame = video_frame
+        self.predictions = predictions or {}
 
 
 class MyModel:
     def __init__(self, weights_path: str):
-        # self._model = torch.hub.load(
-        #     "ultralytics/yolov9", "custom", path=weights_path, force_reload=True
-        # )
+        # charge le modele et les poids
+        self._model = YOLO(weights_path)
+        print("Modèle chargé avec succès")
 
-        self._model = YOLO(
-            "/teamspace/studios/this_studio/runs/detect/train7/weights/best.torchscript" 
-        )
+    def infer(self, video_frames: List[VideoFrame]) -> List[VideoFrameWithPredictions]:
+        print("Video frames:", len(video_frames))
 
-        # with torch.inference_mode():
-        
+        # convertir liste d'images en objet reconnu par yolo
+        images = [v.image for v in video_frames]
 
-        self._model(
-            "/teamspace/studios/this_studio/Rock-Paper-Scissors-SXSW-14/test/images/egohands-public-1621349890675_png_jpg.rf.0d6f828c1a48a7515a87a85c468da676.jpg",
-        )
+        # convertir les images en numpy array
+        images_np = [np.array(img) for img in images]
 
-    # after v0.9.18
-    def infer(self, video_frames: List[VideoFrame]) -> List[Any]:
-        # result must be returned as list of elements representing model prediction for single frame
-        # with order unchanged.
-        with torch.inference_mode():
-            return self._model([v.image for v in video_frames])
+        # faire predictions
+        results = self._model(images_np)
+
+        # liste pour stocker les images et les prédictions
+        enriched_video_frames = []
+
+        # màj des images avec les prédictions
+        for i, result in enumerate(results):
+            boxes = result.boxes.xyxy.tolist() if result.boxes else []
+            scores = result.boxes.conf.tolist() if result.boxes else []
+            class_indices = result.boxes.cls.tolist() if result.boxes else []
+
+            # créer un nouvelle image enrichie avec les prédictions
+            enriched_frame = VideoFrameWithPredictions(
+                video_frame=video_frames[i],
+                predictions={
+                    "boxes": boxes,
+                    "scores": scores,
+                    "class_indices": class_indices,
+                },
+            )
+
+            enriched_video_frames.append(enriched_frame)
+
+        return enriched_video_frames
 
 
-my_model = MyModel(
-    "/Users/maximekuil/Documents/Simplon/ShiFuMi_computerVision/shifumi_trained.pt"
+def render_boxes_on_frame(
+    video_frame_with_predictions: VideoFrameWithPredictions,
+) -> VideoFrame:
+    # convertir l'image en numpy array
+    image = np.array(video_frame_with_predictions.image)
+    predictions = video_frame_with_predictions.predictions
+
+    if predictions:
+        boxes = predictions["boxes"]
+        scores = predictions["scores"]
+        class_indices = predictions["class_indices"]
+
+        for box, score, class_idx in zip(boxes, scores, class_indices):
+            x1, y1, x2, y2 = map(int, box)
+            label = f"Classe: {class_idx}, Probabilité: {score:.2f}"
+
+            # dessine le boarding box
+            cv2.rectangle(image, (x1, y1), (x2, y2), (255, 0, 0), 2)
+
+            # mettre le label
+            cv2.putText(
+                image,
+                label,
+                (x1, y1 - 10),
+                cv2.FONT_HERSHEY_SIMPLEX,
+                0.9,
+                (255, 0, 0),
+                2,
+            )
+
+    video_frame_with_predictions.video_frame.image = image
+    return video_frame_with_predictions.video_frame
+
+
+my_model = MyModel("../models/shifumi_trained_yolo9t.torchscript")
+pipeline = InferencePipeline.init_with_custom_logic(
+    on_video_frame=my_model.infer,
+    video_reference=0,  # Ensure this is the correct device ID for your webcam
+    on_prediction=render_boxes_on_frame,
 )
-# pipeline = InferencePipeline.init_with_custom_logic(
-#     on_video_frame=my_model.infer,
-#     video_reference=1,  # Path to video, device id (int, usually 0 for built in webcams), or RTSP stream url
-#     on_prediction=render_boxes,  # Function to run after each prediction
-# )
-# pipeline.start()
-# pipeline.join()
+
+
+pipeline.start()
+pipeline.join()
